@@ -1,0 +1,2068 @@
+# this file is the single source of truth for all snippets.
+# it's used by build_snippets.py to generate platform-specific snippet files.
+
+# schema:
+#
+# variables: <object> (optional) a key-value store for variables that can be referenced in triggers and replacements using {{variable_name}}. the build script will substitute these variables. for obsidian, it can substitute them with obsidian's native `${VAR}` format.
+# 
+# snippets:
+#   - trigger: <string> the text that activates the snippet. in single quotes to prevent escape characters.
+#     regex: <boolean> (default: false) whether the trigger should be treated as a regex pattern or plaintext.
+#     replacement: <string|javascript> the content to be inserted. in double quotes to allow for escape characters.
+#       - for simple text, just provide the string. use $1, $2 for tab stops.
+#       - for dynamic/scripted snippets, provide the javascript code block.
+#         the script will be adapted for each platform by the build script.
+#     description: <string> (optional) a short explanation of what the snippet does.
+#     target_platforms: <array> (optional) a list of platforms to target (e.g., [obsidian, vscode]).
+#       if omitted, the snippet will be generated for all platforms.
+#     priority: <number> (optional) (default: 0) the priority of the snippet. higher priority snippets triggered first.
+#     options:
+#       math: <boolean> (default: false) snippet is active only in math contexts.
+#       inline_math: <boolean> (default: false) snippet is active only in inline math contexts. obsidian only.
+#       display_math: <boolean> (default: false) snippet is active only in display math contexts. obsidian only.
+#       text: <boolean> (default: false) snippet is active only in non-math/text contexts.
+#       code: <boolean> (default: false) snippet is active only in code blocks. obsidian only.
+#       auto: <boolean> (default: true) should the snippet trigger automatically.
+#       visual: <boolean> (default: false) for snippets that operate on selected text. obsidian only.
+#       in_word: <boolean> (default: true) allow snippet to trigger inside a word (vscode's 'i' flag).
+#       word_boundary: <boolean> (default: true) trigger only on word boundaries (vscode's 'w' flag).
+#       beginning_of_line: <boolean> (default: false) trigger only at the beginning of a line (vscode's 'b' flag).
+#       multi_line: <boolean> (default: false) trigger on multiple lines (vscode's 'M' flag).
+#     platforms: <object> (optional) platform-specific overrides.
+#       obsidian: <object> override any of the top-level keys for obsidian.
+#       vscode: <object> override any of the top-level keys for vscode.
+#
+# verbatim_snippets: <object> (optional) a key-value store for platform-specific
+#   verbatim snippets. these will be appended to the generated snippet files
+#   without any processing.
+#   obsidian: <array> a list of verbatim snippets for obsidian.
+#   vscode: <array> a list of verbatim snippets for vscode.
+
+variables:
+  GREEK: alpha|beta|gamma|Gamma|delta|Delta|epsilon|varepsilon|zeta|eta|theta|Theta|iota|kappa|lambda|Lambda|mu|nu|omicron|xi|Xi|pi|Pi|rho|sigma|Sigma|tau|upsilon|Upsilon|varphi|phi|Phi|chi|psi|Psi|omega|Omega
+  SYMBOL: cdot|cdots|sum|prod|cap|cup|iff|ell|mid|subset|supset|notin|sim|hbar|infty|leftrightarrow|mapsto|setminus|bigcap|bigcup|land|lor|subseteq|supseteq|implies|impliedby|exists|forall|equiv|square|neq|geq|leq|gg|ll|simeq|approx|propto|oplus|otimes|times|star|perp|det|adj|exp|ln|log|partial|circ|deg|wedge|langle|rangle|cong|max|min|nabla|Gal|Aut|Hom|im|ker|Im|Re|dim|deg|wedge|langle|rangle|cong|codim|vdots|ddots|int|oint|iint|iiint
+  SHORT_SYMBOL: to|pm|mp
+snippets:
+- trigger: mk
+  replacement: $$1$
+  description: Inline math mode
+  options:
+    text: true
+    auto: true
+- trigger: dm
+  replacement: $$$1$$
+  description: Display math mode
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+    auto: true
+    word_boundary: true
+- trigger: dm
+  replacement: '\[
+
+    $1
+
+    \]'
+  description: Display math mode
+  target_platforms:
+  - vscode
+  options:
+    text: true
+    auto: true
+- trigger: beg
+  replacement: '\begin{$0}
+
+    $1
+
+    \end{$0}'
+  description: Begin environment
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: (pmat|bmat|Bmat|vmat|Vmat)
+  replacement: '\begin{[[0]]rix}
+
+    $0
+
+    \end{[[0]]rix}'
+  description: Matrix environment
+  regex: true
+  target_platforms:
+  - obsidian
+  options:
+    display_math: true
+    auto: true
+- trigger: matrix
+  replacement: '\begin{matrix}
+
+    $0
+
+    \end{matrix}'
+  description: Matrix environment
+  target_platforms:
+  - obsidian
+  options:
+    display_math: true
+    auto: true
+- trigger: (pmat|bmat|Bmat|vmat|Vmat)
+  replacement: \begin{[[0]]rix}$0\end{[[0]]rix}
+  description: Matrix environment
+  regex: true
+  target_platforms:
+  - obsidian
+  options:
+    inline_math: true
+    auto: true
+- trigger: matrix
+  replacement: \begin{matrix}$0\end{matrix}
+  description: Matrix environment
+  target_platforms:
+  - obsidian
+  options:
+    inline_math: true
+    auto: true
+- trigger: case
+  replacement: '\begin{cases}
+
+    $0
+
+    \end{cases}'
+  description: Case environment
+  target_platforms:
+  - obsidian
+  options:
+    display_math: true
+    auto: true
+- trigger: case
+  replacement: \begin{cases}$0\end{cases}
+  description: Case environment
+  target_platforms:
+  - obsidian
+  options:
+    inline_math: true
+    auto: true
+- trigger: align*
+  replacement: '\begin{align*}
+
+    $0
+
+    \end{align*}'
+  description: Align environment
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: array
+  replacement: '\begin{array}
+
+    $0
+
+    \end{array}'
+  description: Array environment
+  target_platforms:
+  - obsidian
+  options:
+    display_math: true
+    auto: true
+- trigger: array
+  replacement: \begin{array}$0\end{array}
+  description: Array environment
+  target_platforms:
+  - obsidian
+  options:
+    inline_math: true
+    auto: true
+- trigger: box
+  replacement: '``rv = ''┌'' + ''─''.repeat(t[0].length + 2) + ''┐''``
+
+    │ $1 │
+
+    ``rv = ''└'' + ''─''.repeat(t[0].length + 2) + ''┘''``
+
+    '
+  description: Box
+  target_platforms:
+  - vscode
+  options:
+    auto: true
+- trigger: table([1-9]{1}) ([1-9]{1})
+  replacement: "\\begin{table}[H]\n\t\\centering\n\t\\begin{tabular}{``let len = m[2];\
+    \ let results = \"\"; for(var i=0; i<len-1; i++){ results += \"c|\"} results +=\
+    \ \"c\"; rv = results;``}\n\t    \\toprule\n\t\t\t``let order = 1; nrow = m[1];\
+    \ ncol = m[2]; for (var i=0; i<nrow-1; i++){ for(var j = 0;j <ncol-1;j++){ rv\
+    \ += `${snip.tabstop(order+3)} & `; order ++;}\trv += ` ${snip.tabstop(order+3)}\
+    \ \\\\\\\\`+ `\\\\`+ `\\n`; order ++; if(i == 0){ rv += `\t\t\\\\midrule` + `\\\
+    n`; } rv += `\t\t\t`; }\tfor(var j = 0;j <ncol-1;j++){ rv += `${snip.tabstop(order+3)}\
+    \ & `; order ++;} rv += ` ${snip.tabstop(order+3)} \\\\\\\\` + `\\\\`;``\n   \
+    \ \t\\bottomrule\n\t\\end{tabular}\n\t\\caption{${2:caption}}\n\t\\label{tab:${3:label}}\n\
+    \\end{table}\n"
+  description: Table environment
+  regex: true
+  target_platforms:
+  - vscode
+  options:
+    text: true
+    beginning_of_line: true
+    auto: true
+- trigger: ary([1-9]{1}) ([1-9]{1})
+  replacement: "\\begin{array}{``let len = m[2]; let results = \"\"; for(var i=0;\
+    \ i<len; i++){ results += \"c\"} rv = results;``}\n``let order = 1; let nrow =\
+    \ m[1]; let ncol = m[2]; for (var i=0; i<nrow-1; i++){ for(var j = 0;j <ncol-1;j++){\
+    \ rv += `${snip.tabstop(order)} & `; order ++;} rv += ` ${snip.tabstop(order)}\
+    \ \\\\\\\\`+ `\\\\`+ `\\n` + `\t`; order ++;} for(var j = 0;j <ncol-1;j++){ rv\
+    \ += `${snip.tabstop(order)} & `; order ++;} rv += ` ${snip.tabstop(order)} \\\
+    \\\\\\`+ `\\\\`;``\n\\end{array}\n"
+  description: Array environment
+  regex: true
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    in_word: true
+    beginning_of_line: true
+    auto: true
+- trigger: (b|p)mat([1-9]{1}) ([1-9]{1})
+  replacement: "\\begin{``rv = m[1]``matrix}``\nlet order = 1;\nlet nrow = m[2];\n\
+    let ncol = m[3];\nrv = `\\n`;\nfor (var i=0; i<nrow; i++){\n\trv += '\t';\n\t\
+    for(var j = 0;j <ncol-1;j++){\n\t\trv += `${snip.tabstop(order)} & `;\n\t\torder\
+    \ ++;\n\t}\n\trv += ` ${snip.tabstop(order)} \\\\\\\\`+ `\\\\`+ `\\n`;\n\torder\
+    \ ++;\n}\n``\\end{``rv = m[1]``matrix}$0\n"
+  description: Matrix environment (bmatrix or pmatrix)
+  regex: true
+  target_platforms:
+  - vscode
+  priority: 2000
+  options:
+    math: true
+    in_word: true
+    word_boundary: true
+    auto: true
+- trigger: vec([1-9])
+  replacement: '\begin{pmatrix}
+
+    ``msg = snip.tabstop(1); for (i = 1; i < parseInt(m[1],10); i++) { msg += '' \\\\\\
+    \n'' + snip.tabstop(count + 1); count++; } rv = msg;``
+
+    \end{pmatrix}$0
+
+    '
+  description: Column vector
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: ((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/
+  replacement: \frac{``rv = m[1]``}{$1}$0
+  description: Fraction (no parentheses)
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: ^.*\)/
+  replacement: '``let str = m[0]; str = str.slice(0, -1); let lastIndex = str.length
+    - 1; let depth = 0; let i = str.length - 1; while (true) { if (str[i] == '')'')
+    depth += 1; if (str[i] == ''('') depth -= 1; if (depth == 0) break; i -= 1; }
+    let results = str.slice(0, i) + "\\frac{" + str.slice(i+1, -1) + "}"; rv = results;``
+
+    {$1}$0
+
+    '
+  description: Fraction with parentheses
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: '([a-zA-Z]+)([0-9]+) '
+  replacement: '``if ( m[2].length == 1 ) { a = ''_''; b = '' ''; } else { a = ''_{'';
+    b = ''} ''; } if (m[1] == "pmat" || m[1] == "bmat" || m[1] == "ary") { rv = m[1]
+    + m[2] + '' '' } else { rv = m[1] + a + m[2] + b }``
+
+    '
+  description: Underset
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: ({{GREEK}}|{{SYMBOL}}|{{SHORT_SYMBOL}})
+  replacement: \``rv = m[1]``
+  description: Greek letter, symbol, or short symbol
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: '@a'
+  replacement: \alpha
+  description: alpha
+  options:
+    math: true
+    auto: true
+- trigger: '@A'
+  replacement: \alpha
+  description: Alpha
+  options:
+    math: true
+    auto: true
+- trigger: '@b'
+  replacement: \beta
+  description: beta
+  options:
+    math: true
+    auto: true
+- trigger: '@B'
+  replacement: \beta
+  description: Beta
+  options:
+    math: true
+    auto: true
+- trigger: '@g'
+  replacement: \gamma
+  description: gamma
+  options:
+    math: true
+    auto: true
+- trigger: '@G'
+  replacement: \Gamma
+  description: Gamma
+  options:
+    math: true
+    auto: true
+- trigger: '@d'
+  replacement: \delta
+  description: delta
+  options:
+    math: true
+    auto: true
+- trigger: '@D'
+  replacement: \Delta
+  description: Delta
+  options:
+    math: true
+    auto: true
+- trigger: '@e'
+  replacement: \epsilon
+  description: epsilon
+  options:
+    math: true
+    auto: true
+- trigger: '@E'
+  replacement: \epsilon
+  description: Epsilon
+  options:
+    math: true
+    auto: true
+- trigger: :e
+  replacement: \varepsilon
+  description: varepsilon
+  options:
+    math: true
+    auto: true
+- trigger: :E
+  replacement: \varepsilon
+  description: Varepsilon
+  options:
+    math: true
+    auto: true
+- trigger: '@z'
+  replacement: \zeta
+  description: zeta
+  options:
+    math: true
+    auto: true
+- trigger: '@Z'
+  replacement: \zeta
+  description: Zeta
+  options:
+    math: true
+    auto: true
+- trigger: '@h'
+  replacement: \eta
+  description: eta
+  options:
+    math: true
+    auto: true
+- trigger: '@t'
+  replacement: \theta
+  description: theta
+  options:
+    math: true
+    auto: true
+- trigger: '@T'
+  replacement: \Theta
+  description: Theta
+  options:
+    math: true
+    auto: true
+- trigger: '@i'
+  replacement: \iota
+  description: iota
+  options:
+    math: true
+    auto: true
+- trigger: '@k'
+  replacement: \kappa
+  description: kappa
+  options:
+    math: true
+    auto: true
+- trigger: '@K'
+  replacement: \kappa
+  description: Kappa
+  options:
+    math: true
+    auto: true
+- trigger: '@l'
+  replacement: \lambda
+  description: lambda
+  options:
+    math: true
+    auto: true
+- trigger: '@L'
+  replacement: \Lambda
+  description: Lambda
+  options:
+    math: true
+    auto: true
+- trigger: '@m'
+  replacement: \mu
+  description: mu
+  options:
+    math: true
+    auto: true
+- trigger: '@M'
+  replacement: \mu
+  description: Mu
+  options:
+    math: true
+    auto: true
+- trigger: '@n'
+  replacement: \nu
+  description: nu
+  options:
+    math: true
+    auto: true
+- trigger: '@x'
+  replacement: \xi
+  description: xi
+  options:
+    math: true
+    auto: true
+- trigger: '@X'
+  replacement: \Xi
+  description: Xi
+  options:
+    math: true
+    auto: true
+- trigger: '@p'
+  replacement: \pi
+  description: pi
+  options:
+    math: true
+    auto: true
+- trigger: '@P'
+  replacement: \Pi
+  description: Pi
+  options:
+    math: true
+    auto: true
+- trigger: '@r'
+  replacement: \rho
+  description: rho
+  options:
+    math: true
+    auto: true
+- trigger: '@R'
+  replacement: \rho
+  description: Rho
+  options:
+    math: true
+    auto: true
+- trigger: '@s'
+  replacement: \sigma
+  description: sigma
+  options:
+    math: true
+    auto: true
+- trigger: '@S'
+  replacement: \Sigma
+  description: Sigma
+  options:
+    math: true
+    auto: true
+- trigger: '@u'
+  replacement: \tau
+  description: tau
+  options:
+    math: true
+    auto: true
+- trigger: '@y'
+  replacement: \upsilon
+  description: upsilon
+  options:
+    math: true
+    auto: true
+- trigger: '@Y'
+  replacement: \Upsilon
+  description: Upsilon
+  options:
+    math: true
+    auto: true
+- trigger: '@f'
+  replacement: \phi
+  description: phi
+  options:
+    math: true
+    auto: true
+- trigger: '@F'
+  replacement: \phi
+  description: Phi
+  options:
+    math: true
+    auto: true
+- trigger: :f
+  replacement: \varphi
+  description: varphi
+  options:
+    math: true
+    auto: true
+- trigger: :F
+  replacement: \varphi
+  description: Varphi
+  options:
+    math: true
+    auto: true
+- trigger: '@v'
+  replacement: \psi
+  description: psi
+  options:
+    math: true
+    auto: true
+- trigger: '@V'
+  replacement: \Psi
+  description: Psi
+  options:
+    math: true
+    auto: true
+- trigger: '@c'
+  replacement: \chi
+  description: chi
+  options:
+    math: true
+    auto: true
+- trigger: '@C'
+  replacement: \chi
+  description: Chi
+  options:
+    math: true
+    auto: true
+- trigger: '@o'
+  replacement: \omega
+  description: omega
+  options:
+    math: true
+    auto: true
+- trigger: '@O'
+  replacement: \Omega
+  description: Omega
+  options:
+    math: true
+    auto: true
+- trigger: ome
+  replacement: \omega
+  description: omega
+  options:
+    math: true
+    auto: true
+- trigger: ([^\\])(arcsin|arccos|arctan|arccot|arccsc|arcsec|sin|cos|tan|cot|csc|sec)
+  replacement: '[[0]]\[[1]]'
+  description: Trigonometric function
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = m[1] + ''\''  + m[2]``'
+  regex: true
+- trigger: \\(arcsin|arccos|arctan|arccot|arccsc|arcsec|sin|cos|tan|cot|csc|sec)([A-Za-gi-z])
+  replacement: \[[0]] [[1]]
+  description: Space after trigonometric functions
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + '' '' + m[2]``'
+  regex: true
+- trigger: \\(arcsinh|arccosh|arctanh|arccoth|arcsch|arcsech|sinh|cosh|tanh|coth|csch|sech)([A-Za-z])
+  replacement: \[[0]] [[1]]
+  description: Space after hyperbolic trigonometric functions
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + '' '' + m[2]``'
+  regex: true
+- trigger: \\(neq|geq|leq|gg|ll|sim)([0-9]+)
+  replacement: \[[0]] [[1]]
+  description: Inequality
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + '' '' + m[2]``'
+  regex: true
+- trigger: (CC|RR|QQ|ZZ|NN|FF|EE|PP)
+  replacement: \[[0]]
+  description: Common mathematical letter symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\'' + m[1]``'
+  regex: true
+- trigger: II
+  replacement: \mathbb{1}
+  description: II
+  options:
+    math: true
+    auto: true
+- trigger: \mathbb{1}I
+  replacement: \hat{\mathbb{1}}
+  description: III
+  options:
+    math: true
+    auto: true
+- trigger: Fp
+  replacement: \FF_p
+  description: F_p
+  options:
+    math: true
+    auto: true
+- trigger: Fq
+  replacement: \FF_q
+  description: F_q
+  options:
+    math: true
+    auto: true
+- trigger: Rn
+  replacement: \RR^n
+  description: R^n
+  options:
+    math: true
+    auto: true
+- trigger: ([A-Z])#
+  replacement: \mathbb{[[0]]}
+  description: Boldface
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\mathbb{'' + m[1] + ''}''``'
+  regex: true
+- trigger: ..
+  replacement: \ldots
+  description: ellipsis
+  options:
+    math: true
+    auto: true
+- trigger: \ldots.
+  replacement: \cdots
+  description: ellipsis with period
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: \ldots.
+  replacement: \cdots
+  description: ellipsis with period
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+- trigger: ooo
+  replacement: \infty
+  description: infinity
+  options:
+    math: true
+    auto: true
+- trigger: +-
+  replacement: \pm
+  description: plus or minus
+  options:
+    math: true
+    auto: true
+- trigger: -+
+  replacement: \mp
+  description: minus or plus
+  options:
+    math: true
+    auto: true
+- trigger: ([^\\])pm
+  replacement: '[[0]]\pm'
+  description: plus or minus
+  options:
+    math: true
+  platforms:
+    vscode:
+      replacement: '``rv = m[1]``\pm'
+  regex: true
+- trigger: ([^\\])mp
+  replacement: '[[0]]\mp'
+  description: minus or plus
+  options:
+    math: true
+  platforms:
+    vscode:
+      replacement: '``rv = m[1]``\mp'
+  regex: true
+- trigger: xx
+  replacement: \times
+  description: times
+  options:
+    math: true
+    auto: true
+- trigger: sq
+  replacement: \sqrt{ $1 }$2
+  description: square root
+  options:
+    math: true
+    auto: true
+- trigger: <->
+  replacement: \leftrightarrow
+  description: leftrightarrow
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      options:
+        priority: 2
+- trigger: ->
+  replacement: \to
+  description: to
+  options:
+    math: true
+    auto: true
+- trigger: '!>'
+  replacement: \mapsto
+  description: maps to
+  options:
+    math: true
+    auto: true
+- trigger: =>
+  replacement: \implies
+  description: implies
+  options:
+    math: true
+    auto: true
+- trigger: =<
+  replacement: \impliedby
+  description: impliedby
+  options:
+    math: true
+    auto: true
+- trigger: \\\
+  replacement: \setminus
+  description: setminus
+  options:
+    auto: true
+  platforms:
+    vscode:
+      options:
+        math: true
+- trigger: '||'
+  replacement: \mid
+  description: mid
+  options:
+    math: true
+    auto: true
+- trigger: and
+  replacement: \cap
+  description: intersection
+  options:
+    math: true
+    auto: true
+- trigger: orr
+  replacement: \cup
+  description: union
+  options:
+    math: true
+    auto: true
+- trigger: inn
+  replacement: \in
+  description: in
+  options:
+    math: true
+    auto: true
+- trigger: notin
+  replacement: \notin
+  description: not in
+  options:
+    math: true
+    auto: true
+- trigger: \subset eq
+  replacement: \subseteq
+  description: subseteq
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      options:
+        priority: 5
+- trigger: \supset eq
+  replacement: \supseteq
+  description: supseteq
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      options:
+        priority: 5
+- trigger: eset
+  replacement: \varnothing
+  description: empty set
+  options:
+    math: true
+    auto: true
+- trigger: set
+  replacement: \{ $1 \}$2
+  description: set
+  options:
+    math: true
+    auto: true
+- trigger: e\xi sts
+  replacement: \exists
+  description: exists
+  options:
+    math: true
+    auto: true
+- trigger: ===
+  replacement: \equiv
+  description: equivalent
+  options:
+    math: true
+    auto: true
+- trigger: Sq
+  replacement: \square
+  description: square
+  options:
+    math: true
+    auto: true
+- trigger: '!='
+  replacement: \neq
+  description: not equal
+  options:
+    math: true
+    auto: true
+- trigger: '>='
+  replacement: \geq
+  description: greater than or equal to
+  options:
+    math: true
+    auto: true
+- trigger: <=
+  replacement: \leq
+  description: less than or equal to
+  options:
+    math: true
+    auto: true
+- trigger: '>>'
+  replacement: \gg
+  description: greater than
+  options:
+    math: true
+    auto: true
+- trigger: '<<'
+  replacement: \ll
+  description: less than
+  options:
+    math: true
+    auto: true
+- trigger: ~~
+  replacement: \sim
+  description: similar to
+  options:
+    math: true
+    auto: true
+- trigger: \sim~
+  replacement: \approx
+  description: approx
+  options:
+    math: true
+    auto: true
+- trigger: //
+  replacement: \frac{$1}{$2}$3
+  description: fraction
+  options:
+    math: true
+    auto: true
+- trigger: prop
+  replacement: \propto
+  description: proportional to
+  options:
+    math: true
+    auto: true
+- trigger: (nabl|del)
+  replacement: \nabla
+  description: nabla
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: '**'
+  replacement: \cdot
+  description: dot
+  options:
+    math: true
+    auto: true
+- trigger: para
+  replacement: \parallel
+  description: parallel
+  options:
+    math: true
+    auto: true
+- trigger: \pi tchfork
+  replacement: \pitchfork
+  description: pitchfork
+  options:
+    math: true
+    auto: true
+- trigger: bu\ll et
+  replacement: \bullet
+  description: bullet
+  options:
+    math: true
+    auto: true
+- trigger: trace
+  replacement: \tr
+  description: trace
+  options:
+    math: true
+    auto: true
+- trigger: lim
+  replacement: \lim_{ ${1:n} \to ${2:\infty} } $3
+  description: limit
+  options:
+    math: true
+    auto: true
+- trigger: linf
+  replacement: \liminf_{ ${1:n} \to ${2:\infty} } $3
+  description: liminf
+  options:
+    math: true
+    auto: true
+- trigger: lsup
+  replacement: \limsup_{ ${1:n} \to ${2:\infty} } $3
+  description: limsup
+  options:
+    math: true
+    auto: true
+- trigger: o+
+  replacement: \oplus
+  description: oplus
+  options:
+    math: true
+    auto: true
+- trigger: ox
+  replacement: \otimes
+  description: otimes
+  options:
+    math: true
+    auto: true
+- trigger: ot\im es
+  replacement: \otimes
+  description: otimes
+  options:
+    math: true
+    auto: true
+- trigger: \cdot ss
+  replacement: \cdots
+  description: cdots
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      priority: 2
+- trigger: sr
+  replacement: ^{2}
+  description: square
+  options:
+    math: true
+    auto: true
+- trigger: cb
+  replacement: ^{3}
+  description: cube
+  options:
+    math: true
+    auto: true
+- trigger: rd
+  replacement: ^{$1}$2
+  description: superscript
+  options:
+    math: true
+    auto: true
+- trigger: invs
+  replacement: ^{-1}
+  description: inverse
+  options:
+    math: true
+    auto: true
+- trigger: ee
+  replacement: e^{$1}$2
+  description: exponential
+  options:
+    math: true
+    auto: true
+- trigger: conj
+  replacement: ^{*}
+  description: conjugate
+  options:
+    math: true
+    auto: true
+- trigger: sts
+  replacement: _\text{$1}
+  description: subscript
+  options:
+    math: true
+    auto: true
+- trigger: _
+  replacement: _{$1}$2
+  description: subscript
+  options:
+    math: true
+    auto: true
+- trigger: ([A-Za-z])(\d)
+  replacement: '[[0]]_{[[1]]}'
+  description: Auto letter subscript
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = m[1] + ''_{'' + m[2] + ''}''``'
+  regex: true
+- trigger: ([A-Za-z])_(\d\d)
+  replacement: '[[0]]_{[[1]]}'
+  description: Auto letter subscript
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = m[1] + ''_{'' + m[2] + ''}''``'
+  regex: true
+- trigger: \\hat{([A-Za-z])}(\d)
+  replacement: hat{[[0]]}_{[[1]]}
+  description: Auto letter subscript
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\hat{'' + m[1] + ''}_{'' + m[2] + ''}''``'
+  regex: true
+- trigger: \\mathbf{([A-Za-z])}(\d)
+  replacement: \mathbf{[[0]]}_{[[1]]}
+  description: Auto letter subscript
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\mathbf{'' + m[1] + ''}_{'' + m[2] + ''}''``'
+  regex: true
+- trigger: \\vec{([A-Za-z])}(\d)
+  replacement: \vec{[[0]]}_{[[1]]}
+  description: Auto letter subscript
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\vec{'' + m[1] + ''}_{'' + m[2] + ''}''``'
+  regex: true
+- trigger: ([a-zA-Z0-9])td
+  replacement: '``rv = m[1] + ''^{'' + snip.tabstop(1) + ''}''``'
+  description: Exponentiation
+  target_platforms:
+  - vscode
+  options:
+    math: true
+  regex: true
+- trigger: '\b(d|D)(\\?\w+)[dD](\w{1}|\\\w+) '
+  replacement: "``\nif (m[1] == 'd') \n  rv = '\\\\frac{\\\\partial ' + m[2] + '}{\\\
+    \\partial ' + m[3] + '}';\nelse \n  rv = '\\\\frac{\\\\mathrm{d}' + m[2] + '}{\\\
+    \\mathrm{d}' + m[3] + '}';\n``\n"
+  description: Derivatives
+  target_platforms:
+  - vscode
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: (
+  replacement: ($1)$2
+  description: Parentheses
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: '['
+  replacement: '[$1]$2'
+  description: Square brackets
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: '{'
+  replacement: '{$1}$2'
+  description: Braces
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: lr(
+  replacement: \left( $1 \right)$2
+  description: Left and right parentheses
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: lr[
+  replacement: \left[ $1 \right]$2
+  description: Left and right square brackets
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: lr{
+  replacement: \left\{ $1 \right\}$2
+  description: Left and right braces
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: lr|
+  replacement: \left| $1 \right|$2
+  description: Left and right vertical bars
+  options:
+    math: true
+    auto: true
+- trigger: lra
+  replacement: \left< $1 \right>$2
+  description: Left and right angle brackets
+  options:
+    math: true
+    auto: true
+- trigger: (
+  replacement: (${VISUAL})
+  description: Visual parentheses
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: '['
+  replacement: '[${VISUAL}]'
+  description: Visual square brackets
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: '{'
+  replacement: '{${VISUAL}}'
+  description: Visual braces
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: avg
+  replacement: \langle $1 \rangle $2
+  description: Average
+  options:
+    math: true
+    auto: true
+- trigger: norm
+  replacement: \lvert $1 \rvert $2
+  description: norm
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      priority: 1
+- trigger: Norm
+  replacement: \lVert $1 \rVert $2
+  description: Norm
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      priority: 1
+- trigger: ceil
+  replacement: \lceil $1 \rceil $2
+  description: ceil
+  options:
+    math: true
+    auto: true
+- trigger: floor
+  replacement: \lfloor $1 \rfloor $2
+  description: floor
+  options:
+    math: true
+    auto: true
+- trigger: mod
+  replacement: \pmod{1}$2
+  description: mod
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      priority: -1
+- trigger: pmod
+  replacement: \pmod{1}$2
+  description: pmod
+  options:
+    math: true
+    auto: true
+- trigger: bmod
+  replacement: \bmod{1}$2
+  description: bmod
+  options:
+    math: true
+    auto: true
+- trigger: text
+  replacement: \text{$1}$2
+  description: Text
+  options:
+    math: true
+    auto: true
+- trigger: rm
+  replacement: \mathrm{$1}$2
+  description: Roman
+  options:
+    math: true
+    auto: true
+- trigger: bf
+  replacement: \mathbf{$1}$2
+  description: Boldface
+  options:
+    math: true
+    auto: true
+- trigger: bb
+  replacement: \mathbb{$1}$2
+  description: Blackboard bold
+  options:
+    math: true
+    auto: true
+- trigger: mcal
+  replacement: \mathcal{$1}$2
+  description: Caligraphic
+  options:
+    math: true
+    auto: true
+- trigger: sf
+  replacement: \mathsf{$1}$2
+  description: Sans-serif
+  options:
+    math: true
+    auto: true
+- trigger: frak
+  replacement: \mathfrak{$1}$2
+  description: Fraktur
+  options:
+    math: true
+    auto: true
+- trigger: oname
+  replacement: \operatorname{$1}$2
+  description: Operator name
+  options:
+    math: true
+    auto: true
+- trigger: \b([a-zA-Z])frak\b
+  replacement: \mathfrak{[[0]]}
+  description: Fraktur
+  priority: 1
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \mathfrak{``rv = m[1]``}
+  regex: true
+- trigger: \b([a-zA-Z])cal\b
+  replacement: \mathcal{[[0]]}
+  description: Caligraphic
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \mathcal{``rv = m[1]``}
+  regex: true
+- trigger: ([a-zA-Z]),\.
+  replacement: \mathbf{[[0]]}
+  description: Boldface
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \mathbf{``rv = m[1]``}
+  regex: true
+- trigger: ([a-zA-Z])\.,
+  replacement: \mathbf{[[0]]}
+  description: Boldface
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \mathbf{``rv = m[1]``}
+  regex: true
+- trigger: (bar|hat|vec|tilde)
+  replacement: \[[0]]{$1}$2
+  description: diacritic
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \``rv = m[1]``{$1}$2
+  regex: true
+- trigger: dot
+  replacement: \dot{$1}$2
+  description: dot
+  options:
+    math: true
+- trigger: und
+  replacement: \underline{$1}$2
+  description: underline
+  options:
+    math: true
+    auto: true
+- trigger: ovr
+  replacement: \overline{$1}$2
+  description: overline
+  options:
+    math: true
+    auto: true
+- trigger: ([a-zA-Z])(bar|hat|ddot|vec|tilde)
+  replacement: \[[1]]{[[0]]}
+  description: diacritic
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \``rv = m[2]``{``rv = m[1]``}
+  regex: true
+- trigger: ([a-zA-Z])dot
+  replacement: \dot{[[0]]}
+  description: dot
+  options:
+    math: true
+  platforms:
+    vscode:
+      replacement: \dot{``rv = m[1]``}
+  regex: true
+- trigger: ([a-zA-Z])und
+  replacement: \underline{[[0]]}
+  description: underline
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \underline{``rv = m[1]``}
+  regex: true
+- trigger: ([a-zA-Z])ovr
+  replacement: \overline{[[0]]}
+  description: overline
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: \overline{``rv = m[1]``}
+  regex: true
+- trigger: par
+  replacement: \frac{ \partial ${1:y} }{ \partial ${2:x} } $3
+  description: Partial derivative
+  options:
+    math: true
+- trigger: pa2
+  replacement: \frac{ \partial^{2} ${1:y} }{ \partial ${2:x}^{2} } $3
+  description: Second partial derivative
+  options:
+    math: true
+    auto: true
+- trigger: pa3
+  replacement: \frac{ \partial^{3} ${1:y} }{ \partial ${2:x}^{3} } $3
+  description: Third partial derivative
+  options:
+    math: true
+    auto: true
+- trigger: pa([A-Za-z])([A-Za-z])
+  replacement: '\frac{ \partial [[0]] }{ \partial [[1]] } '
+  description: Partial derivative
+  options:
+    math: true
+  platforms:
+    vscode:
+      replacement: '\frac{ \partial ``rv = m[1]`` }{ \partial ``rv = m[2]`` } '
+  regex: true
+- trigger: pa([A-Za-z])([A-Za-z])([A-Za-z])
+  replacement: '\frac{ \partial^{2} [[0]] }{ \partial [[1]]^{2} } '
+  description: Second partial derivative
+  options:
+    math: truemkpax
+    auto: true
+  platforms:
+    vscode:
+      replacement: '\frac{ \partial^{2} ``rv = m[1]`` }{ \partial ``rv = m[2]``^{2}
+        } '
+  regex: true
+- trigger: pa([A-Za-z])([A-Za-z])2
+  replacement: '\frac{ \partial^{2} [[0]] }{ \partial [[1]]^{2} } '
+  description: Second partial derivative
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '\frac{ \partial^{2} ``rv = m[1]`` }{ \partial ``rv = m[2]``^{2}
+        } '
+  regex: true
+- trigger: de([A-Za-z])([A-Za-z])
+  replacement: '\frac{ d[[0]] }{ d[[1]] } '
+  description: Derivative
+  options:
+    math: true
+  platforms:
+    vscode:
+      replacement: '\frac{ d``rv = m[1]`` }{ d``rv = m[2]`` } '
+  regex: true
+- trigger: de([A-Za-z])([A-Za-z])2
+  replacement: '\frac{ d^{2}[[0]] }{ d[[1]]^{2} } '
+  description: Second derivative
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '\frac{ d^{2}``rv = m[1]`` }{ d``rv = m[2]``^{2} } '
+  regex: true
+- trigger: ddx
+  replacement: \frac{d}{dx}
+  description: Derivative wrt x
+  options:
+    math: true
+    auto: true
+- trigger: ddy
+  replacement: \frac{d}{dy}
+  description: Derivative wrt y
+  options:
+    math: true
+    auto: true
+- trigger: ddt
+  replacement: \frac{d}{dt}
+  description: Derivative wrt t
+  options:
+    math: true
+    auto: true
+- trigger: oinf
+  replacement: \int_{0}^{\infty} $1 \, d${2:x} $3
+  description: Integral from 0 to infinity
+  options:
+    math: true
+    auto: true
+- trigger: infi
+  replacement: \int_{-\infty}^{\infty} $1 \, d${2:x} $3
+  description: Integral from negative infinity to infinity
+  options:
+    math: true
+    auto: true
+- trigger: dint
+  replacement: \int_{${1:0}}^{${2:\infty}} $3 \, d${4:x} $5
+  description: Integral from 0 to infinity
+  options:
+    math: true
+    auto: true
+- trigger: fx
+  replacement: f(x)
+  description: Function
+  options:
+    math: true
+    auto: true
+- trigger: ff
+  replacement: f($1)
+  description: Function
+  options:
+    math: true
+    auto: true
+- trigger: xnn
+  replacement: x_{n}
+  description: x_n
+  options:
+    math: true
+    auto: true
+- trigger: xii
+  replacement: x_{i}
+  description: x_i
+  options:
+    math: true
+    auto: true
+- trigger: \xii
+  priority: 2
+  replacement: x_{i}
+  description: x_i alternate
+  options:
+    math: true
+    auto: true
+- trigger: xjj
+  replacement: x_{j}
+  description: x_j
+  options:
+    math: true
+    auto: true
+- trigger: xp1
+  replacement: x_{n+1}
+  description: x_{n+1}
+  options:
+    math: true
+    auto: true
+- trigger: ynn
+  replacement: y_{n}
+  description: y_n
+  options:
+    math: true
+    auto: true
+- trigger: yii
+  replacement: y_{i}
+  description: y_i
+  options:
+    math: true
+    auto: true
+- trigger: yjj
+  replacement: y_{j}
+  description: y_j
+  options:
+    math: true
+    auto: true
+- trigger: :(i|j|k)
+  replacement: \mathbf{[[0]]}
+  description: Unit vector (i, j, k)
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\mathbf{'' + m[1] + ''}''``'
+  regex: true
+- trigger: :(x|y|z)
+  replacement: \hat{\mathbf{[[0]]}}
+  description: Unit vector (x, y, z)
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '``rv = ''\hat{\mathbf{'' + m[1] + ''}}''``'
+  regex: true
+- trigger: kbt
+  replacement: k_{B} T
+  description: k_B T
+  options:
+    math: true
+    auto: true
+- trigger: hba
+  replacement: \hbar
+  description: hbar
+  options:
+    math: true
+    auto: true
+- trigger: dag
+  replacement: ^{\dagger}
+  description: dagger
+  options:
+    math: true
+    auto: true
+- trigger: bra
+  replacement: \bra{$1} $2
+  description: bra
+  options:
+    math: true
+    auto: true
+- trigger: ket
+  replacement: \ket{$1} $2
+  description: ket
+  options:
+    math: true
+    auto: true
+- trigger: brk
+  replacement: \braket{ $1 | $2 } $3
+  description: braket
+  options:
+    math: true
+    auto: true
+- trigger: \\bra{([^|]+)\|
+  replacement: '\braket{ [[0]] | $0 '
+  description: Convert bra into braket
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '\braket{ ``rv = m[1]`` | $1 '
+  regex: true
+- trigger: \\bra{(.+)}([^ ]+)>
+  replacement: \braket{ [[0]] | $0
+  description: Convert bra into braket
+  options:
+    math: true
+    auto: true
+  platforms:
+    vscode:
+      replacement: '\braket{ ``rv = m[1]`` | $1 '
+  regex: true
+- trigger: outp
+  replacement: \ket{${1:\psi}} \bra{${1:\psi}} $2
+  description: output
+  options:
+    math: true
+    auto: true
+- trigger: pu
+  replacement: \pu{ $1 }
+  description: physical units
+  options:
+    math: true
+    auto: true
+- trigger: (msun|solm)
+  replacement: M_{\odot}
+  description: solar mass
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: cee
+  replacement: \ce{ $1 }
+  description: chemical formula
+  options:
+    math: true
+    auto: true
+- trigger: iso
+  replacement: '{}^{${1:4}}_{${2:2}}${3:He}'
+  description: isotope
+  options:
+    math: true
+    auto: true
+- trigger: hel4
+  replacement: '{}^{4}_{2}He'
+  description: helium
+  options:
+    math: true
+    auto: true
+- trigger: hel3
+  replacement: '{}^{3}_{2}He'
+  description: helium
+  options:
+    math: true
+    auto: true
+- trigger: ([^\\])({{GREEK}}|{{SYMBOL}})
+  replacement: '[[0]]\[[1]]'
+  description: Add backslash before greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: ([^\\])(${GREEK}|${SYMBOL})
+    vscode:
+      replacement: '``rv = m[1] + ''\'' + m[2]``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}|{{SHORT_SYMBOL}})([A-Za-z])
+  replacement: \[[0]] [[1]]
+  description: Insert space after greek letters and symbols
+  priority: 1
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}|${SHORT_SYMBOL})([A-Za-z])
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + '' '' + m[2]``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) sr
+  replacement: \[[0]]^{2}
+  description: Superscript 2 after greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) sr
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + ''^{2}''``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) cb
+  replacement: \[[0]]^{3}
+  description: Superscript 3 after greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) cb
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + ''^{3}''``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) rd
+  replacement: \[[0]]^{$0}$1
+  description: Superscript arbitrary after greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) rd
+    vscode:
+      replacement: '``rv = ''\'' + m[1] + ''^{$1}$2''``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) (hat|bar|vec|tilde)
+  replacement: \[[1]]{\[[0]]}
+  description: Diacritic over greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) (hat|bar|vec|tilde)
+    vscode:
+      replacement: '``rv = ''\'' + m[2] + ''{'' + m[1] + ''}''``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) dot
+  replacement: \dot{\[[0]]}
+  description: Diacritic over greek letters and symbols
+  options:
+    math: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) dot
+    vscode:
+      replacement: '``rv = ''\dot{'' + m[1] + ''}''``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) und
+  replacement: \underline{\[[0]]}
+  description: Underline greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) und
+    vscode:
+      replacement: '``rv = ''\underline{'' + m[1] + ''}''``'
+  regex: true
+- trigger: \\({{GREEK}}|{{SYMBOL}}) ovr
+  replacement: \overline{\[[0]]}
+  description: Overline greek letters and symbols
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}|${SYMBOL}) ovr
+    vscode:
+      replacement: '``rv = ''\overline{'' + m[1] + ''}''``'
+  regex: true
+- trigger: \\({{GREEK}}),\.
+  replacement: \boldsymbol{\[[0]]}
+  description: Bold greek letter (comma dot)
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK}),\.
+    vscode:
+      replacement: '``rv = ''\boldsymbol{'' + m[1] + ''}''``'
+  regex: true
+- trigger: \\({{GREEK}})\.,
+  replacement: \boldsymbol{\[[0]]}
+  description: Bold greek letter (dot comma)
+  options:
+    math: true
+    auto: true
+  platforms:
+    obsidian:
+      trigger: \\(${GREEK})\.,
+    vscode:
+      replacement: '``rv = ''\boldsymbol{'' + m[1] + ''}''``'
+  regex: true
+- trigger: U
+  replacement: \underbrace{ ${VISUAL} }_{ $0 }
+  description: underbrace
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: O
+  replacement: \overbrace{ ${VISUAL} }^{ $0 }
+  description: overbrace
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: B
+  replacement: \underset{ $0 }{ ${VISUAL} }
+  description: underset
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: C
+  replacement: \cancel{ ${VISUAL} }
+  description: cancel
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: K
+  replacement: \cancelto{ $0 }{ ${VISUAL} }
+  description: cancelto
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: S
+  replacement: \sqrt{ ${VISUAL} }
+  description: sqrt
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: def
+  replacement: '> [!info] Definition
+
+    > $0'
+  description: Definition
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: ex
+  replacement: '> [!example] Example
+
+    > $0'
+  description: Example
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: rem
+  replacement: '> [!note] Remark
+
+    > $0'
+  description: Remark
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: thm
+  replacement: '> [!note] Theorem
+
+    > $0'
+  description: Theorem
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: pf
+  replacement: '> [!success] Proof
+
+    > $0'
+  description: Proof
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: ans
+  replacement: '> [!success] Answer
+
+    > $0'
+  description: Answer
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: soln
+  replacement: '> [!success] Solution
+
+    > $0'
+  description: Solution
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: qu
+  replacement: '> [!question] Question
+
+    > $0'
+  description: Question
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: cor
+  replacement: '> [!note] Corollary
+
+    > $0'
+  description: Corollary
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: prop
+  replacement: '> [!note] Proposition
+
+    > $0'
+  description: Proposition
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: lem
+  replacement: '> [!note] Lemma
+
+    > $0'
+  description: Lemma
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: fact
+  replacement: '> [!note] Fact
+
+    > $0'
+  description: Fact
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: claim
+  replacement: '> [!note] Claim
+
+    > $0'
+  description: Claim
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: note
+  replacement: '> [!note] Note
+
+    > $0'
+  description: Note
+  target_platforms:
+  - obsidian
+  options:
+    text: true
+- trigger: \PPP
+  replacement: \P
+  description: P
+  target_platforms:
+  - obsidian
+  priority: 1
+  options:
+    math: true
+    auto: true
+- trigger: (NP|coNP|SAT|TIME|NTIME|SPACE|NSPACE)
+  replacement: \[[0]]
+  description: Complexity class
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+  regex: true
+- trigger: 3SAT
+  priority: 2
+  replacement: \THREESAT
+  description: 3SAT
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: tayl
+  replacement: ${0:f}(${1:x} + ${2:h}) = ${0:f}(${1:x}) + ${0:f}'(${1:x})${2:h} +
+    ${0:f}''(${1:x}) \frac{${2:h}^{2}}{2!} + \ldots$3
+  description: Taylor expansion
+  target_platforms:
+  - obsidian
+  options:
+    math: true
+    auto: true
+- trigger: tikzcd
+  replacement: "```tikz\n\\usepackage{tikz-cd,amsmath,amssymb}\n\n\\usetikzlibrary{calc}\n\
+    \\usetikzlibrary{decorations.pathmorphing}\n\\tikzset{curve/.style={settings={#1},to\
+    \ path={(\\tikztostart)\n    .. controls ($(\\tikztostart)!\\pv{pos}!(\\tikztotarget)!\\\
+    pv{height}!270:(\\tikztotarget)$)\n    and ($(\\tikztostart)!1-\\pv{pos}!(\\tikztotarget)!\\\
+    pv{height}!270:(\\tikztotarget)$)\n    .. (\\tikztotarget)\\tikztonodes}},\n \
+    \   settings/.code={\\tikzset{quiver/.cd,#1}\n        \\def\\pv##1{\\pgfkeysvalueof{/tikz/quiver/##1}}},\n\
+    \    quiver/.cd,pos/.initial=0.35,height/.initial=0}\n\\tikzset{tail reversed/.code={\\\
+    pgfsetarrowsstart{tikzcd to}}}\n\\tikzset{2tail/.code={\\pgfsetarrowsstart{Implies[reversed]}}}\n\
+    \\tikzset{2tail reversed/.code={\\pgfsetarrowsstart{Implies}}}\n\\tikzset{no body/.style={/tikz/dash\
+    \ pattern=on 0 off 1mm}}\n\n\\begin{document}\n$0\n\\end{document}\n```"
+  description: tikzcd
+  target_platforms:
+  - obsidian
+verbatim_snippets:
+  obsidian:
+  - "{ trigger: /iden(\\d)/, replacement: (match) => {\n        const n = match[1];\n\
+    \n        let arr = [];\n        for (let j = 0; j < n; j++) {\n            arr[j]\
+    \ = [];\n            for (let i = 0; i < n; i++) {\n                arr[j][i]\
+    \ = (i === j) ? 1 : 0;\n            }\n        }\n\n        let output = arr.map(el\
+    \ => el.join(\" & \")).join(\" \\\\\\\\\\n\");\n        output = `\\\\begin{pmatrix}\\\
+    n${output}\\n\\\\end{pmatrix}`;\n        return output;\n    }, options: \"mA\"\
+    , description: \"N x N identity matrix\"}"
