@@ -40,7 +40,7 @@
 
 variables:
   GREEK: alpha|beta|gamma|Gamma|delta|Delta|epsilon|varepsilon|zeta|eta|theta|Theta|iota|kappa|lambda|Lambda|mu|nu|omicron|xi|Xi|pi|Pi|rho|sigma|Sigma|tau|upsilon|Upsilon|varphi|phi|Phi|chi|psi|Psi|omega|Omega
-  SYMBOL: cdot|cdots|sum|prod|cap|cup|iff|ell|mid|subset|supset|notin|sim|hbar|infty|leftrightarrow|mapsto|setminus|bigcap|bigcup|land|lor|subseteq|supseteq|implies|impliedby|exists|forall|equiv|square|neq|geq|leq|gg|ll|simeq|approx|propto|oplus|otimes|times|star|perp|det|adj|exp|ln|log|partial|circ|deg|wedge|langle|rangle|cong|max|min|nabla|Gal|Aut|Hom|im|ker|Im|Re|dim|deg|wedge|langle|rangle|cong|codim|vdots|ddots|int|oint|iint|iiint
+  SYMBOL: cdot|cdots|sum|prod|cap|cup|iff|ell|mid|subset|supset|notin|sim|hbar|infty|leftrightarrow|mapsto|setminus|bigcap|bigcup|land|lor|subseteq|supseteq|implies|impliedby|exists|forall|equiv|square|neq|geq|leq|gg|ll|simeq|approx|propto|oplus|otimes|times|star|perp|det|adj|exp|ln|log|partial|circ|deg|wedge|langle|rangle|cong|max|min|nabla|Gal|Aut|Hom|im|ker|Im|Re|dim|deg|wedge|langle|rangle|cong|codim|vdots|ddots|oint|iint|iiint
   SHORT_SYMBOL: to|pm|mp
 snippets:
 - trigger: mk
@@ -1418,6 +1418,11 @@ snippets:
     vscode:
       replacement: \overline{``rv = m[1]``}
   regex: true
+- trigger: pa
+  replacement: \partial
+  description: Partial derivative symbol
+  options:
+    math: true
 - trigger: par
   replacement: \frac{ \partial ${1:y} }{ \partial ${2:x} } $3
   description: Partial derivative
@@ -1448,8 +1453,7 @@ snippets:
   replacement: '\frac{ \partial^{2} [[0]] }{ \partial [[1]]^{2} } '
   description: Second partial derivative
   options:
-    math: truemkpax
-    auto: true
+    math: true
   platforms:
     vscode:
       replacement: '\frac{ \partial^{2} ``rv = m[1]`` }{ \partial ``rv = m[2]``^{2}
@@ -1500,6 +1504,12 @@ snippets:
 - trigger: ddt
   replacement: \frac{d}{dt}
   description: Derivative wrt t
+  options:
+    math: true
+    auto: true
+- trigger: int
+  replacement: '\int '
+  description: Integral
   options:
     math: true
     auto: true
