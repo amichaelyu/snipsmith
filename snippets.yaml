@@ -181,9 +181,7 @@ snippets:
 
     │ $1 │
 
-    ``rv = ''└'' + ''─''.repeat(t[0].length + 2) + ''┘''``
-
-    '
+    ``rv = ''└'' + ''─''.repeat(t[0].length + 2) + ''┘''``'
   description: Box
   target_platforms:
   - vscode
@@ -247,9 +245,7 @@ snippets:
     ``msg = snip.tabstop(1); for (i = 1; i < parseInt(m[1],10); i++) { msg += '' \\\\\\
     \n'' + snip.tabstop(count + 1); count++; } rv = msg;``
 
-    \end{pmatrix}$0
-
-    '
+    \end{pmatrix}$0'
   description: Column vector
   target_platforms:
   - vscode
@@ -270,11 +266,7 @@ snippets:
   replacement: '``let str = m[0]; str = str.slice(0, -1); let lastIndex = str.length
     - 1; let depth = 0; let i = str.length - 1; while (true) { if (str[i] == '')'')
     depth += 1; if (str[i] == ''('') depth -= 1; if (depth == 0) break; i -= 1; }
-    let results = str.slice(0, i) + "\\frac{" + str.slice(i+1, -1) + "}"; rv = results;``
-
-    {$1}$0
-
-    '
+    let results = str.slice(0, i) + "\\frac{" + str.slice(i+1, -1) + "}"; rv = results;``{$1}$0'
   description: Fraction with parentheses
   target_platforms:
   - vscode
@@ -285,19 +277,8 @@ snippets:
 - trigger: '([a-zA-Z]+)([0-9]+) '
   replacement: '``if ( m[2].length == 1 ) { a = ''_''; b = '' ''; } else { a = ''_{'';
     b = ''} ''; } if (m[1] == "pmat" || m[1] == "bmat" || m[1] == "ary") { rv = m[1]
-    + m[2] + '' '' } else { rv = m[1] + a + m[2] + b }``
-
-    '
+    + m[2] + '' '' } else { rv = m[1] + a + m[2] + b }``'
   description: Underset
-  target_platforms:
-  - vscode
-  options:
-    math: true
-    auto: true
-  regex: true
-- trigger: ({{GREEK}}|{{SYMBOL}}|{{SHORT_SYMBOL}})
-  replacement: \``rv = m[1]``
-  description: Greek letter, symbol, or short symbol
   target_platforms:
   - vscode
   options:
@@ -1380,6 +1361,7 @@ snippets:
     math: true
     auto: true
 - trigger: ([a-zA-Z])(bar|hat|ddot|vec|tilde)
+  priority: 2
   replacement: \[[1]]{[[0]]}
   description: diacritic
   options:
@@ -1460,6 +1442,7 @@ snippets:
         } '
   regex: true
 - trigger: pa([A-Za-z])([A-Za-z])2
+  priority: 2
   replacement: '\frac{ \partial^{2} [[0]] }{ \partial [[1]]^{2} } '
   description: Second partial derivative
   options:
@@ -1711,15 +1694,15 @@ snippets:
   options:
     math: true
     auto: true
-- trigger: ([^\\])({{GREEK}}|{{SYMBOL}})
+- trigger: ([^\\])({{GREEK}}|{{SYMBOL}}|{{SHORT_SYMBOL}})
   replacement: '[[0]]\[[1]]'
-  description: Add backslash before greek letters and symbols
+  description: Add backslash before greek letters, symbols, and short symbols
   options:
     math: true
     auto: true
   platforms:
     obsidian:
-      trigger: ([^\\])(${GREEK}|${SYMBOL})
+      trigger: ([^\\])(${GREEK}|${SYMBOL}|${SHORT_SYMBOL})
     vscode:
       replacement: '``rv = m[1] + ''\'' + m[2]``'
   regex: true
@@ -1773,6 +1756,7 @@ snippets:
       replacement: '``rv = ''\'' + m[1] + ''^{$1}$2''``'
   regex: true
 - trigger: \\({{GREEK}}|{{SYMBOL}}) (hat|bar|vec|tilde)
+  priority: 2
   replacement: \[[1]]{\[[0]]}
   description: Diacritic over greek letters and symbols
   options:
@@ -1782,7 +1766,7 @@ snippets:
     obsidian:
       trigger: \\(${GREEK}|${SYMBOL}) (hat|bar|vec|tilde)
     vscode:
-      replacement: '``rv = ''\'' + m[2] + ''{'' + m[1] + ''}''``'
+      replacement: '``rv = ''\'' + m[2] + ''{\'' + m[1] + ''}''``'
   regex: true
 - trigger: \\({{GREEK}}|{{SYMBOL}}) dot
   replacement: \dot{\[[0]]}
