@@ -942,6 +942,7 @@ snippets:
     math: true
     auto: true
 - trigger: lim
+  priority: 2
   replacement: \lim_{ ${1:n} \to ${2:\infty} } $3
   description: limit
   options:
@@ -966,6 +967,7 @@ snippets:
     math: true
     auto: true
 - trigger: ox
+  priority: -1
   replacement: \otimes
   description: otimes
   options:
@@ -1419,6 +1421,54 @@ snippets:
 - trigger: pa3
   replacement: \frac{ \partial^{3} ${1:y} }{ \partial ${2:x}^{3} } $3
   description: Third partial derivative
+  options:
+    math: true
+    auto: true
+- trigger: pax
+  replacement: \frac{ \partial }{ \partial x } $1
+  description: Partial derivative wrt x
+  options:
+    math: true
+- trigger: pax2
+  priority: 2
+  replacement: \frac{ \partial^2 }{ \partial x^2 } $1
+  description: Second partial derivative wrt x
+  options:
+    math: true
+    auto: true
+- trigger: pay
+  replacement: \frac{ \partial }{ \partial y } $1
+  description: Partial derivative wrt y
+  options:
+    math: true
+- trigger: pay2
+  priority: 2
+  replacement: \frac{ \partial^2 }{ \partial y^2 } $1
+  description: Second partial derivative wrt y
+  options:
+    math: true
+    auto: true
+- trigger: paz
+  replacement: \frac{ \partial }{ \partial z } $1
+  description: Partial derivative wrt z
+  options:
+    math: true
+- trigger: paz2
+  priority: 2
+  replacement: \frac{ \partial^2 }{ \partial z^2 } $1
+  description: Second partial derivative wrt z
+  options:
+    math: true
+    auto: true
+- trigger: pat
+  replacement: \frac{ \partial }{ \partial t } $1
+  description: Partial derivative wrt t
+  options:
+    math: true
+- trigger: pat2
+  priority: 2
+  replacement: \frac{ \partial^2 }{ \partial t^2 } $1
+  description: Second partial derivative wrt t
   options:
     math: true
     auto: true
