@@ -1582,25 +1582,6 @@ snippets:
   options:
     math: true
     auto: true
-- trigger: xii
-  replacement: x_{i}
-  description: x_i
-  options:
-    math: true
-    auto: true
-- trigger: \xii
-  priority: 2
-  replacement: x_{i}
-  description: x_i alternate
-  options:
-    math: true
-    auto: true
-- trigger: xjj
-  replacement: x_{j}
-  description: x_j
-  options:
-    math: true
-    auto: true
 - trigger: xp1
   replacement: x_{n+1}
   description: x_{n+1}
@@ -1613,15 +1594,22 @@ snippets:
   options:
     math: true
     auto: true
-- trigger: yii
-  replacement: y_{i}
-  description: y_i
+- trigger: ii
+  replacement: _{i}
+  description: _i
   options:
     math: true
     auto: true
-- trigger: yjj
-  replacement: y_{j}
-  description: y_j
+- trigger: jj
+  replacement: _{j}
+  description: _j
+  options:
+    math: true
+    auto: true
+- trigger: \xii
+  priority: 2
+  replacement: x_{i}
+  description: x_i alternate
   options:
     math: true
     auto: true
