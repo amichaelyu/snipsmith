@@ -1512,15 +1512,15 @@ snippets:
     vscode:
       replacement: '\frac{ d``rv = m[1]`` }{ d``rv = m[2]`` } '
   regex: true
-- trigger: de([A-Za-z])([A-Za-z])2
-  replacement: '\frac{ d^{2}[[0]] }{ d[[1]]^{2} } '
-  description: Second derivative
+- trigger: de([A-Za-z])([A-Za-z])(\d+)
+  replacement: '\frac{ d^{[[2]]}[[0]] }{ d[[1]]^{[[2]]} } '
+  description: Nth derivative
   options:
     math: true
     auto: true
   platforms:
     vscode:
-      replacement: '\frac{ d^{2}``rv = m[1]`` }{ d``rv = m[2]``^{2} } '
+      replacement: '\frac{ d^{``rv = m[3]``}``rv = m[1]`` }{ d``rv = m[2]``^{``rv = m[3]``} } '
   regex: true
 - trigger: ddx
   replacement: \frac{d}{dx}
