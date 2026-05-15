@@ -844,6 +844,12 @@ snippets:
   options:
     math: true
     auto: true
+- trigger: tfor
+  replacement: \therefore
+  description: therefore
+  options:
+    math: true
+    auto: true
 - trigger: Sq
   replacement: \square
   description: square
@@ -889,6 +895,12 @@ snippets:
 - trigger: \sim~
   replacement: \approx
   description: approx
+  options:
+    math: true
+    auto: true
+- trigger: \sim=
+  replacement: \simeq
+  description: simeq
   options:
     math: true
     auto: true
