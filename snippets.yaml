@@ -1173,7 +1173,7 @@ snippets:
     math: true
     auto: true
 - trigger: lra
-  replacement: \left< $1 \right>$2
+  replacement: \left\langle $1 \right\rangle $2
   description: Left and right angle brackets
   options:
     math: true
