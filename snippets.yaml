@@ -607,15 +607,15 @@ snippets:
     vscode:
       replacement: '``rv = ''\'' + m[1] + '' '' + m[2]``'
   regex: true
-- trigger: (CC|RR|QQ|ZZ|NN|FF|EE|PP)
-  replacement: \[[0]]
+- trigger: (C|R|Q|Z|N|F|E|P)\1
+  replacement: \mathbb{[[0]]}
   description: Common mathematical letter symbols
   options:
     math: true
     auto: true
   platforms:
     vscode:
-      replacement: '``rv = ''\'' + m[1]``'
+      replacement: '``rv = ''\mathbb{'' + m[1] + ''}''``'
   regex: true
 - trigger: II
   replacement: \mathbb{1}
