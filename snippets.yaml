@@ -254,7 +254,7 @@ snippets:
     auto: true
   regex: true
 - trigger: ((\d+)|(\d*)(\\)?([A-Za-z]+)((\^|_)(\{\d+\}|\d))*)/
-  replacement: \frac{[[0]]}{$1}$0
+  replacement: \frac{[[0]]}{$0}
   description: Fraction (no parentheses)
   options:
     math: true

@@ -80,7 +80,9 @@ def build_obsidian_snippets(
         # for regex triggers, wrap in slashes; for plaintext, use string format
         is_regex = s.get('regex', False)
         if is_regex:
-            trigger_str = f"trigger: /{s['trigger']}/"
+            # escape unescaped forward slashes so they don't terminate the JS regex literal
+            escaped_trigger = re.sub(r'(?<!\\)/', r'\\/', s['trigger'])
+            trigger_str = f"trigger: /{escaped_trigger}/"
         else:
             trigger_str = f"trigger: {json.dumps(s['trigger'])}"
 
