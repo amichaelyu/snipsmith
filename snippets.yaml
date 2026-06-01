@@ -1431,12 +1431,14 @@ snippets:
   options:
     math: true
     auto: true
+  priority: 2
 - trigger: pa3
   replacement: \frac{ \partial^{3} ${1:y} }{ \partial ${2:x}^{3} } $3
   description: Third partial derivative
   options:
     math: true
     auto: true
+  priority: 2
 - trigger: pax
   replacement: \frac{ \partial }{ \partial x } $1
   description: Partial derivative wrt x
@@ -1553,6 +1555,20 @@ snippets:
   options:
     math: true
     auto: true
+- trigger: de2
+  replacement: \frac{ d^{2} ${1:y} }{ d ${2:x}^{2} } $3
+  description: Second derivative
+  options:
+    math: true
+    auto: true
+  priority: 2
+- trigger: de3
+  replacement: \frac{ d^{3} ${1:y} }{ d ${2:x}^{3} } $3
+  description: Third derivative
+  options:
+    math: true
+    auto: true
+  priority: 2
 - trigger: int
   replacement: '\int '
   description: Integral
