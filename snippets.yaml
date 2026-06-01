@@ -917,13 +917,24 @@ snippets:
   options:
     math: true
     auto: true
-- trigger: (nabl|del)
+- trigger: nabl
   replacement: \nabla
   description: nabla
   options:
     math: true
     auto: true
-  regex: true
+- trigger: del
+  replacement: \delta
+  description: delta
+  options:
+    math: true
+    auto: true
+- trigger: Del
+  replacement: \Delta
+  description: Delta
+  options:
+    math: true
+    auto: true
 - trigger: '**'
   replacement: \cdot
   description: dot
