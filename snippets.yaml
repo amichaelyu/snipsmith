@@ -2129,6 +2129,12 @@ snippets:
   description: tikzcd
   target_platforms:
   - obsidian
+- trigger: br
+  replacement: <br>
+  description: HTML line break
+  options:
+    text: true
+    auto: false
 verbatim_snippets:
   obsidian:
   - "{ trigger: /iden(\\d)/, replacement: (match) => {\n        const n = match[1];\n\
